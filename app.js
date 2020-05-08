@@ -36,19 +36,29 @@ app.route("/bookmarks").get(function(req,res){
   });
 })
 .post(function(req,res){
-  const bookmark=new Bookmarks({
-    Id: uuid.v4(),
-    Link: req.body.link,
-    Title: req.body.title,
-    TimeCreated:Math.round(Date.now() / 1000),
-    TimeUpdated:Math.round(Date.now() / 1000),
-    Publisher: req.body.publisher
-  });
+  //db.inventory.find(  )
+  Bookmarks.findOne({ $or: [ { Title:req.body.title}, { Link:req.body.link} ] },function(err,foundBookmark){
+    if(!err){
+      if(!foundBookmark){
+          const bookmark=new Bookmarks({
+            Id: uuid.v4(),
+            Link: req.body.link,
+            Title: req.body.title,
+            TimeCreated:Math.round(Date.now() / 1000),
+            TimeUpdated:Math.round(Date.now() / 1000),
+            Publisher: req.body.publisher
+          });
   bookmark.save(function(err){
     if(!err){
       res.send("success");
     }
   });
+}
+else{
+  res.send("bookmark with such title or such link already exist");
+}
+}
+});
 })
 .delete(function(req,res){
   Bookmarks.deleteMany(function(err){

@@ -69,9 +69,11 @@ app.route("/bookmarks/:booktitle").get(function(req,res){
 .post(function(req,res){
   const tagGiven=req.body.tagtitle;
   Bookmarks.findOne({title:req.params.title},function(err,foundBookmark){
-    Tag.findOne({title:tagGiven},function(err,foundTag){
-      foundBookmark.Tag.push(foundTag);
-      res.send("added tag");
+
+    Tag.findOne({Title:tagGiven},function(err,foundTag){
+      foundBookmark.Tags.push(foundTag);
+      foundBookmark.save();
+      res.send("suuccessfully added tag to bookmark");
     });
   });
 })
